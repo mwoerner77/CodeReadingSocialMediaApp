@@ -1,21 +1,17 @@
 ﻿namespace SocialMediaApp
 {
-    using Microsoft.Extensions.Caching.Memory;
     using SocialMediaApp.Models;
     using System.Text.Json;
 
     public class AccountLibrary
     {
-        private readonly IMemoryCache recentAccountsCache;
         private List<Account?>? accounts = new List<Account?>();
         private static AccountLibrary accountLibraryInstance = new AccountLibrary();
 
         //29:
         //
         private AccountLibrary()
-        {
-            MemoryCacheOptions cacheOptions = new MemoryCacheOptions();
-            this.recentAccountsCache = new MemoryCache(cacheOptions);      
+        { 
         }
 
         //30:
@@ -26,24 +22,16 @@
         }
 
         public bool TryGetAccount(string username, out Account? account)
-        {
+        { 
             //31:
-            //
-            if (this.recentAccountsCache.TryGetValue(username, out Account? acc))
-            {
-                account = acc;
-                return true;
-            }
-
-            //32:
             //
             this.FetchAllAccounts();
 
-            //33:
+            //32:
             //
             if (this.accounts != null)
             {
-                //34:
+                //33:
                 //
                 foreach (Account? acc1 in this.accounts)
                 {
@@ -78,10 +66,6 @@
             this.accounts?.Add(newAccount);
             string accountsJsonText = JsonSerializer.Serialize(this.accounts);
             File.WriteAllText("Accounts.json", accountsJsonText);
-
-            //38:
-            //
-            this.recentAccountsCache.Set(username, newAccount);
         }
 
         public void AddNewAccount(string username, string password)
@@ -103,10 +87,6 @@
             this.accounts?.Add(newAccount);
             string accountsJsonText = JsonSerializer.Serialize(this.accounts);
             File.WriteAllText("Accounts.json", accountsJsonText);
-
-            //42:
-            //
-            this.recentAccountsCache.Set(username, newAccount);
         }
 
         //43:
